@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/id_swiperefreshlayout"
+<RelativeLayout
+    android:id="@+id/rl"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity">
 
-    <cn.manjuu.chatboard.main.MyRecyclerView
-        android:id="@+id/my_recycler_view"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/id_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
-</android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_above="@+id/id_tablayout"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/id_tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="59dip"
+        android:background="#ff33b5e5"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabIndicatorHeight="0dp"
+        app:tabPadding="0dp"
+        android:layout_alignParentBottom="true"
+        app:tabSelectedTextColor="@android:color/black"
+        app:tabTextColor="@android:color/background_light"/>
+</RelativeLayout>

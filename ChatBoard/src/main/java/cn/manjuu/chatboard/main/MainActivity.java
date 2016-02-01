@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,11 +16,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import cn.manjuu.chatboard.R;
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private float mTouchX;
     private float mTouchY;
     NavigationView navigationView;
+    TabLayout tabLayout;
+    MyFragmentAdapter mFragmentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +52,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAdapter.addData("haha" + index++, 1);
+//                mAdapter.addData("haha" + index++, 1);
+                mFragmentAdapter.notifyDataSetChanged();
             }
         });
 
@@ -65,6 +72,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
 
+//        initRecyclerView();
+//        initSwip();
+        initTabAndPager();
+    }
+
+
+    private void initTabAndPager() {
+        tabLayout = (TabLayout) findViewById(R.id.id_tablayout);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+        mFragmentAdapter = new MyFragmentAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mFragmentAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            View view = LayoutInflater.from(this).inflate(R.layout.main_tab_item, null);
+            tab.setCustomView(view);
+            ViewGroup customView = (ViewGroup) tab.getCustomView();
+            ImageView im = (ImageView) customView.getChildAt(0);
+            TextView tv = (TextView) customView.getChildAt(1);
+            im.setImageResource(R.drawable.imageview_selector);
+            tv.setText("tab" + i);
+        }
+    }
+
+    private void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -107,8 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
-
-        initSwip();
     }
 
     private void initSwip() {
