@@ -2,9 +2,14 @@ package cn.manjuu.chatboard.main;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,18 +72,21 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @SuppressLint("ValidFragment")
-    private class TempFragment extends BaseFragment {
+    private class TempFragment extends BaseFragment implements MyAdapter.OnItemClickListener {
+
+        RecyclerView mRecyclerView;
+        LinearLayoutManager mLayoutManager;
+        SwipeRefreshLayout swipeRefreshLayout;
+        MyAdapter mAdapter;
+        Handler mHandler = new Handler();
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.item, null);
+            return inflater.inflate(R.layout.fragment_main, null);
         }
 
         @Override
         protected void findView() {
-            ViewGroup view = (ViewGroup) getView();
-            TextView tv = (TextView) view.getChildAt(0);
-            tv.setText(this.toString());
         }
 
         @Override
@@ -88,7 +96,83 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
 
         @Override
         protected void init() {
+            initRecyclerView();
+            initSwip();
+        }
 
+        private void initRecyclerView() {
+            View view = getView();
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+            mLayoutManager = new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mAdapter = new MyAdapter();
+            mAdapter.setListener(this);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+//        mRecyclerView.setVisibility(View.GONE);
+//            mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    System.out.println("onTouch");
+//                    MotionEvent e = event;
+//                    int action = e.getAction();
+//                    switch (action) {
+//                        case MotionEvent.ACTION_DOWN:
+//                            mTouchX = e.getRawX();
+//                            mTouchY = e.getRawY();
+//                            System.out.println("mTouchX: " + mTouchX);
+//                            break;
+//                        case MotionEvent.ACTION_MOVE:
+//                            if (mTouchX == 0) {
+//                                mTouchX = e.getRawX();
+//                                break;
+//                            }
+//                            float x = e.getRawX();
+//                            float y = e.getRawY();
+//                            float dx = Math.abs(x - mTouchX);
+//                            float dy = Math.abs(y - mTouchY);
+//                            System.out.println("mTouchX: " + mTouchX + ", x: " + x + ", dx: " + dx);
+//                            if (dx > 100 && !drawer.isDrawerOpen(GravityCompat.START)) {
+//                                drawer.openDrawer(GravityCompat.START);
+//                            }
+//                            break;
+//                        case MotionEvent.ACTION_UP:
+//                            mTouchX = 0;
+//                            break;
+//                    }
+//                    return false;
+//                }
+//            });
+        }
+
+        private void initSwip() {
+            View view = getView();
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.id_swiperefreshlayout);
+//        swipeRefreshLayout.setVisibility(View.GONE);
+            swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+//            swipeRefreshLayout.setEnabled(false);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    }, 3000);
+                }
+            });
+        }
+
+        @Override
+        public void onItemClick(View v, int position) {
+            System.out.println("position: " + position);
+//        mAdapter.removeData(position);
+            ViewGroup vg = (ViewGroup) v;
+            TextView tv = (TextView) vg.getChildAt(0);
+            mAdapter.setData(position, tv.getText() + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
+            mAdapter.notifyItemChanged(position);
         }
     }
 }

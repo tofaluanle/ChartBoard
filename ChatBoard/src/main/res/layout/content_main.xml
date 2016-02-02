@@ -5,11 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    app:layout_behavior="cn.manjuu.chatboard.main.MyBehavior"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity">
+    <!--
+        android:layout_below="@+id/id_viewpager"
+         app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
+    -->
     <android.support.v4.view.ViewPager
         android:id="@+id/id_viewpager"
         android:layout_width="match_parent"
@@ -20,11 +24,11 @@
         android:id="@+id/id_tablayout"
         android:layout_width="match_parent"
         android:layout_height="59dip"
+        android:layout_alignParentBottom="true"
         android:background="#ff33b5e5"
         app:tabIndicatorColor="@color/colorAccent"
         app:tabIndicatorHeight="0dp"
         app:tabPadding="0dp"
-        android:layout_alignParentBottom="true"
         app:tabSelectedTextColor="@android:color/black"
         app:tabTextColor="@android:color/background_light"/>
 </RelativeLayout>

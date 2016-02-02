@@ -37,7 +37,6 @@ public class MyRecyclerView extends RecyclerView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-        System.out.println("onInterceptTouchEvent");
         int action = e.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:

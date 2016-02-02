@@ -8,18 +8,13 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -28,13 +23,9 @@ import android.widget.TextView;
 import cn.manjuu.chatboard.R;
 import cn.manjuu.chatboard.setting.SettingActivity;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MyAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
-    RecyclerView mRecyclerView;
-    LinearLayoutManager mLayoutManager;
-    MyAdapter mAdapter;
-    SwipeRefreshLayout swipeRefreshLayout;
     int index;
     Handler mHandler = new Handler();
     private float mTouchX;
@@ -42,12 +33,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     TabLayout tabLayout;
     MyFragmentAdapter mFragmentAdapter;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         findViewById(R.id.del).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAdapter.removeData(1);
+//                mAdapter.removeData(1);
             }
         });
 
@@ -72,11 +64,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        initRecyclerView();
-//        initSwip();
         initTabAndPager();
     }
-
 
     private void initTabAndPager() {
         tabLayout = (TabLayout) findViewById(R.id.id_tablayout);
@@ -94,68 +83,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             im.setImageResource(R.drawable.imageview_selector);
             tv.setText("tab" + i);
         }
-    }
-
-    private void initRecyclerView() {
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyAdapter();
-        mAdapter.setListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-//        mRecyclerView.setVisibility(View.GONE);
-        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                System.out.println("onTouch");
-                MotionEvent e = event;
-                int action = e.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        mTouchX = e.getRawX();
-                        mTouchY = e.getRawY();
-                        System.out.println("mTouchX: " + mTouchX);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if (mTouchX == 0) {
-                            mTouchX = e.getRawX();
-                            break;
-                        }
-                        float x = e.getRawX();
-                        float y = e.getRawY();
-                        float dx = Math.abs(x - mTouchX);
-                        float dy = Math.abs(y - mTouchY);
-                        System.out.println("mTouchX: " + mTouchX + ", x: " + x + ", dx: " + dx);
-                        if (dx > 100 && !drawer.isDrawerOpen(GravityCompat.START)) {
-                            drawer.openDrawer(GravityCompat.START);
-                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        mTouchX = 0;
-                        break;
-                }
-                return false;
-            }
-        });
-    }
-
-    private void initSwip() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.id_swiperefreshlayout);
-//        swipeRefreshLayout.setVisibility(View.GONE);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 3000);
-            }
-        });
     }
 
     @Override
@@ -202,20 +129,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            mAdapter.addData("haha" + index++, 1);
+//            mAdapter.addData("haha" + index++, 1);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onItemClick(View v, int position) {
-        System.out.println("position: " + position);
-//        mAdapter.removeData(position);
-        ViewGroup vg = (ViewGroup) v;
-        TextView tv = (TextView) vg.getChildAt(0);
-        mAdapter.setData(position, tv.getText() + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
-        mAdapter.notifyItemChanged(position);
-    }
 
 }
