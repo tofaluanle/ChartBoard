@@ -103,7 +103,7 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         private void initRecyclerView() {
             View view = getView();
             mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-            mLayoutManager = new LinearLayoutManager(getContext());
+            mLayoutManager = new LinearLayoutManager(view.getContext());
             mRecyclerView.setLayoutManager(mLayoutManager);
             mAdapter = new MyAdapter();
             mAdapter.setListener(this);

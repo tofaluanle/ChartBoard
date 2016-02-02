@@ -21,7 +21,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -30,26 +30,26 @@
                     android:layout_height="wrap_content"
                     >
 
-                    <TextView
-                        android:id="@+id/del"
+                    <Button
+                        android:id="@+id/btn_return"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
                         android:background="?attr/selectableItemBackground"
                         android:padding="10dp"
-                        android:text="DEL"
+                        android:text="RETURN"
                         />
 
                     <TextView
                         android:id="@+id/add"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_toLeftOf="@id/del"
+                        android:layout_toRightOf="@id/btn_return"
                         android:background="?attr/selectableItemBackground"
-                        android:padding="10dp"
-                        android:text="ADD"
+                        android:gravity="center"
+                        android:text="TITLE"
                         />
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>

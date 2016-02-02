@@ -1,6 +1,8 @@
 package cn.manjuu.chatboard.main;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import cn.manjuu.chatboard.R;
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        findViewById(R.id.del).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_return).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                mAdapter.removeData(1);
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         initTabAndPager();
+        initPopupWindow();
     }
 
     private void initTabAndPager() {
@@ -75,11 +79,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.setupWithViewPager(mViewPager);
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
-            View view = LayoutInflater.from(this).inflate(R.layout.main_tab_item, null);
+            ViewGroup view = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.main_tab_item, null);
             tab.setCustomView(view);
-            ViewGroup customView = (ViewGroup) tab.getCustomView();
-            ImageView im = (ImageView) customView.getChildAt(0);
-            TextView tv = (TextView) customView.getChildAt(1);
+            ImageView im = (ImageView) view.getChildAt(0);
+            TextView tv = (TextView) view.getChildAt(1);
             im.setImageResource(R.drawable.imageview_selector);
             tv.setText("tab" + i);
         }
@@ -121,19 +124,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+//        menu.add("menu");// 必须创建一项
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-//            mAdapter.addData("haha" + index++, 1);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+//    @Override
+//    public boolean onMenuOpened(int featureId, Menu menu) {
+//        if (mPopupWindow != null) {
+//            if (!mPopupWindow.isShowing()) {
+//            /*最重要的一步：弹出显示   在指定的位置(parent)  最后两个参数 是相对于 x / y 轴的坐标*/
+//                mPopupWindow.showAtLocation(toolbar, Gravity.BOTTOM, 0, 0);
+//            }
+//        }
+//        return false;// 返回为true 则显示系统menu
+//    }
+    PopupWindow mPopupWindow;
+
+    private void initPopupWindow() {
+        LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+    /*设置显示menu布局   view子VIEW*/
+        View sub_view = mLayoutInflater.inflate(R.layout.main_menu_ctg, null);
+    /*第一个参数弹出显示view  后两个是窗口大小*/
+        mPopupWindow = new PopupWindow(sub_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    /*设置背景显示*/
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+    /*设置触摸外面时消失*/
+        mPopupWindow.setOutsideTouchable(true);
+    /*设置系统动画*/
+        mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
+        mPopupWindow.update();
+        mPopupWindow.setTouchable(true);
+    /*设置点击menu以外其他地方以及返回键退出*/
+        mPopupWindow.setFocusable(true);
+
+        /** 1.解决再次点击MENU键无反应问题
+         *  2.sub_view是PopupWindow的子View
+         */
+        sub_view.setFocusableInTouchMode(true);
+        sub_view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((keyCode == KeyEvent.KEYCODE_MENU) && (mPopupWindow.isShowing())) {
+                    mPopupWindow.dismiss();// 这里写明模拟menu的PopupWindow退出就行
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
-
-
 }
