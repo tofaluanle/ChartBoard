@@ -41,16 +41,29 @@
                         android:text="RETURN"
                         />
 
+                    <Button
+                        android:id="@+id/btn_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:padding="10dp"
+                        android:text="RETURN"
+                        />
+
                     <TextView
                         android:id="@+id/add"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_toRightOf="@id/btn_return"
+                        android:layout_toLeftOf="@+id/btn_menu"
                         android:background="?attr/selectableItemBackground"
                         android:gravity="center"
                         android:text="TITLE"
                         />
+
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>
 
