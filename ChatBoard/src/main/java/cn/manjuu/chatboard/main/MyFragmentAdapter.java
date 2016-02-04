@@ -82,6 +82,7 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+//            return inflater.inflate(R.layout.item, null);
             return inflater.inflate(R.layout.fragment_main, null);
         }
 
@@ -103,6 +104,9 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         private void initRecyclerView() {
             View view = getView();
             mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+            if (mRecyclerView == null) {
+                return;
+            }
             mLayoutManager = new LinearLayoutManager(view.getContext());
             mRecyclerView.setLayoutManager(mLayoutManager);
             mAdapter = new MyAdapter();
@@ -149,6 +153,9 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         private void initSwip() {
             View view = getView();
             swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.id_swiperefreshlayout);
+            if (swipeRefreshLayout == null) {
+                return;
+            }
 //        swipeRefreshLayout.setVisibility(View.GONE);
             swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
 //            swipeRefreshLayout.setEnabled(false);

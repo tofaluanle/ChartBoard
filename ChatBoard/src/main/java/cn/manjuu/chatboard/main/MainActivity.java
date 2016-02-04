@@ -3,13 +3,10 @@ package cn.manjuu.chatboard.main;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -28,10 +25,6 @@ import cn.manjuu.chatboard.setting.SettingActivity;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private DrawerLayout drawer;
-    int index;
-    Handler mHandler = new Handler();
-    private float mTouchX;
-    private float mTouchY;
     NavigationView navigationView;
     TabLayout tabLayout;
     MyFragmentAdapter mFragmentAdapter;
@@ -79,6 +72,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             im.setImageResource(R.drawable.imageview_selector);
             tv.setText("tab" + i);
         }
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                drawer.setDragGlobalEnable(position == 0);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
