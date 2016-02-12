@@ -3,11 +3,10 @@ package cn.manjuu.chatboard.main;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +18,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.manjuu.chatboard.Logger;
 import cn.manjuu.chatboard.R;
 import cn.manjuu.chatboard.base.BaseFragment;
-import cn.manjuu.chatboard.main.widget.SwipeRefreshLayout;
 
 /**
  * @auther 宋疆疆
@@ -31,36 +28,24 @@ import cn.manjuu.chatboard.main.widget.SwipeRefreshLayout;
 public class MyFragmentAdapter extends FragmentPagerAdapter {
 
     List<Fragment> mFrags;
-    int mPageIndex;
-    private FragmentManager mFm;
-
-    public void setPageIndex(int pageIndex) {
-        if (mPageIndex != pageIndex) {
-//            TempFragment fragment = (TempFragment) mFrags.get(pageIndex);
-//            fragment.onHide();
-            this.mPageIndex = pageIndex;
-        }
-    }
 
     public MyFragmentAdapter(FragmentManager fm) {
         super(fm);
-        mFm = fm;
         init();
     }
 
     private void init() {
         mFrags = new ArrayList<>();
-//        mFrags.add(new TempFragment());
-//        mFrags.add(new TempFragment());
-//        mFrags.add(new TempFragment());
-//        mFrags.add(new TempFragment());
+        mFrags.add(new TempFragment());
+        mFrags.add(new TempFragment());
+        mFrags.add(new TempFragment());
+        mFrags.add(new TempFragment());
     }
 
     @Override
     public Fragment getItem(int position) {
         System.out.println("getItem: " + position);
-//        return mFrags.get(position);
-        return new TempFragment();
+        return mFrags.get(position);
     }
 
     @Override
@@ -80,26 +65,6 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         return fragment;
     }
 
-    Fragment mDelFrg;
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
-        System.out.println("destroyItem: " + position);
-        mDelFrg = (Fragment) object;
-    }
-
-    @Override
-    public void finishUpdate(ViewGroup container) {
-        super.finishUpdate(container);
-        System.out.println("finishUpdate");
-        if (mDelFrg != null) {
-            FragmentTransaction t = mFm.beginTransaction();
-            t.remove(mDelFrg);
-            t.commitAllowingStateLoss();
-        }
-    }
-
     @Override
     public CharSequence getPageTitle(int position) {
         String tab = "tab";
@@ -113,15 +78,7 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         LinearLayoutManager mLayoutManager;
         SwipeRefreshLayout swipeRefreshLayout;
         MyAdapter mAdapter;
-        Handler mHandler = new MyHandler();
-
-        class MyHandler extends Handler {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                System.out.println(msg.getTarget());
-            }
-        }
+        Handler mHandler = new Handler();
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -176,8 +133,7 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
                         public void run() {
                             swipeRefreshLayout.setRefreshing(false);
                         }
-                    }, 300 * 1000);
-                    mHandler.sendEmptyMessageDelayed(0, 300 * 1000);
+                    }, 3 * 1000);
                 }
             });
         }
@@ -190,14 +146,6 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
             TextView tv = (TextView) vg.getChildAt(0);
             mAdapter.setData(position, tv.getText() + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
             mAdapter.notifyItemChanged(position);
-        }
-
-        public void onHide() {
-            Logger.v(this + "   onHide ");
-            mHandler.removeCallbacksAndMessages(null);
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
         }
 
         @Override

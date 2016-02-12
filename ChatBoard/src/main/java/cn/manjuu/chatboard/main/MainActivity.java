@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onPageSelected(int position) {
                 drawer.setDragGlobalEnable(position == 0);
-                mFragmentAdapter.setPageIndex(position);
             }
 
             @Override
