@@ -3,10 +3,11 @@ package cn.manjuu.chatboard.main;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,8 +19,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.manjuu.chatboard.Logger;
 import cn.manjuu.chatboard.R;
 import cn.manjuu.chatboard.base.BaseFragment;
+import cn.manjuu.chatboard.main.widget.SwipeRefreshLayout;
 
 /**
  * @auther 宋疆疆
@@ -28,24 +31,36 @@ import cn.manjuu.chatboard.base.BaseFragment;
 public class MyFragmentAdapter extends FragmentPagerAdapter {
 
     List<Fragment> mFrags;
+    int mPageIndex;
+    private FragmentManager mFm;
+
+    public void setPageIndex(int pageIndex) {
+        if (mPageIndex != pageIndex) {
+//            TempFragment fragment = (TempFragment) mFrags.get(pageIndex);
+//            fragment.onHide();
+            this.mPageIndex = pageIndex;
+        }
+    }
 
     public MyFragmentAdapter(FragmentManager fm) {
         super(fm);
+        mFm = fm;
         init();
     }
 
     private void init() {
         mFrags = new ArrayList<>();
-        mFrags.add(new TempFragment());
-        mFrags.add(new TempFragment());
-        mFrags.add(new TempFragment());
-        mFrags.add(new TempFragment());
+//        mFrags.add(new TempFragment());
+//        mFrags.add(new TempFragment());
+//        mFrags.add(new TempFragment());
+//        mFrags.add(new TempFragment());
     }
 
     @Override
     public Fragment getItem(int position) {
         System.out.println("getItem: " + position);
-        return mFrags.get(position);
+//        return mFrags.get(position);
+        return new TempFragment();
     }
 
     @Override
@@ -65,6 +80,26 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         return fragment;
     }
 
+    Fragment mDelFrg;
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+        System.out.println("destroyItem: " + position);
+        mDelFrg = (Fragment) object;
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        super.finishUpdate(container);
+        System.out.println("finishUpdate");
+        if (mDelFrg != null) {
+            FragmentTransaction t = mFm.beginTransaction();
+            t.remove(mDelFrg);
+            t.commitAllowingStateLoss();
+        }
+    }
+
     @Override
     public CharSequence getPageTitle(int position) {
         String tab = "tab";
@@ -78,10 +113,19 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         LinearLayoutManager mLayoutManager;
         SwipeRefreshLayout swipeRefreshLayout;
         MyAdapter mAdapter;
-        Handler mHandler = new Handler();
+        Handler mHandler = new MyHandler();
+
+        class MyHandler extends Handler {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                System.out.println(msg.getTarget());
+            }
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            super.onCreateView(inflater, container, savedInstanceState);
 //            return inflater.inflate(R.layout.item, null);
             return inflater.inflate(R.layout.fragment_main, null);
         }
@@ -113,41 +157,6 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
             mAdapter.setListener(this);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-//        mRecyclerView.setVisibility(View.GONE);
-//            mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    System.out.println("onTouch");
-//                    MotionEvent e = event;
-//                    int action = e.getAction();
-//                    switch (action) {
-//                        case MotionEvent.ACTION_DOWN:
-//                            mTouchX = e.getRawX();
-//                            mTouchY = e.getRawY();
-//                            System.out.println("mTouchX: " + mTouchX);
-//                            break;
-//                        case MotionEvent.ACTION_MOVE:
-//                            if (mTouchX == 0) {
-//                                mTouchX = e.getRawX();
-//                                break;
-//                            }
-//                            float x = e.getRawX();
-//                            float y = e.getRawY();
-//                            float dx = Math.abs(x - mTouchX);
-//                            float dy = Math.abs(y - mTouchY);
-//                            System.out.println("mTouchX: " + mTouchX + ", x: " + x + ", dx: " + dx);
-//                            if (dx > 100 && !drawer.isDrawerOpen(GravityCompat.START)) {
-//                                drawer.openDrawer(GravityCompat.START);
-//                            }
-//                            break;
-//                        case MotionEvent.ACTION_UP:
-//                            mTouchX = 0;
-//                            break;
-//                    }
-//                    return false;
-//                }
-//            });
         }
 
         private void initSwip() {
@@ -167,7 +176,8 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
                         public void run() {
                             swipeRefreshLayout.setRefreshing(false);
                         }
-                    }, 3000);
+                    }, 300 * 1000);
+                    mHandler.sendEmptyMessageDelayed(0, 300 * 1000);
                 }
             });
         }
@@ -181,5 +191,26 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
             mAdapter.setData(position, tv.getText() + "\n" + "\n" + "\n" + "\n" + "\n" + "\n");
             mAdapter.notifyItemChanged(position);
         }
+
+        public void onHide() {
+            Logger.v(this + "   onHide ");
+            mHandler.removeCallbacksAndMessages(null);
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+
+            mHandler.removeCallbacksAndMessages(null);
+            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.clearAnimation();
+            ViewGroup view = (ViewGroup) getView();
+            view.removeAllViews();
+        }
+
+
     }
 }
