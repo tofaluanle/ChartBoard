@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onPageSelected(int position) {
                 drawer.setDragGlobalEnable(position == 0);
+                mFragmentAdapter.setPageIndex(position);
             }
 
             @Override
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+        drawer.setDragGlobalEnable(mViewPager.getCurrentItem() == 0);
     }
 
     @Override
@@ -172,7 +175,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
-
+        sub_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupWindow.dismiss();// 这里写明模拟menu的PopupWindow退出就行
+                Snackbar.make(tabLayout,"Click " +
+                        "menu 1",Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

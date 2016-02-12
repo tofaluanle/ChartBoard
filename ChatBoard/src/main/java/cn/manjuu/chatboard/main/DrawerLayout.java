@@ -189,6 +189,7 @@ public class DrawerLayout extends ViewGroup {
     private float mX;
     private float mY;
     private boolean mDragGlobalEnable;
+    private boolean mIsFlipX;
 
     public void setDragGlobalEnable(boolean mDragGlobalEnable) {
         this.mDragGlobalEnable = mDragGlobalEnable;
@@ -1253,6 +1254,7 @@ public class DrawerLayout extends ViewGroup {
 
                 mX = ev.getX();
                 mY = ev.getY();
+                mIsFlipX = true;
                 break;
             }
 
@@ -1266,7 +1268,10 @@ public class DrawerLayout extends ViewGroup {
                 float y = ev.getY();
                 float dx = Math.abs(x - mX);
                 float dy = Math.abs(y - mY);
-                if (mDragGlobalEnable && dx > dy && (x - mX) > TOUCH_SLOP) {
+                if (dy > dx && dy > TOUCH_SLOP) {
+                    mIsFlipX = false;
+                }
+                if (mDragGlobalEnable && mIsFlipX && dx > dy && (x - mX) > TOUCH_SLOP) {
                     View drawer = findDrawerWithGravity(Gravity.LEFT);
                     if (!isDrawerVisible(drawer) && action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_CANCEL) {
                         System.out.println("captureChildView");
